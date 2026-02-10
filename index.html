@@ -25,6 +25,7 @@
         .progress-fill { transition: width 0.5s ease; }
         .binge-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
         .binge-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .framework-box { background: linear-gradient(135deg, #FFF7ED 0%, #FED7AA 100%); }
     </style>
 </head>
 <body>
@@ -116,12 +117,100 @@
     };
 
     // ============================================================
+    // FRAMEWORK OVERVIEWS
+    // ============================================================
+    const frameworkOverviews = {
+        rice: {
+            name: "RICE Framework",
+            emoji: "🎯",
+            formula: "(Reach × Impact × Confidence) ÷ Effort",
+            components: [
+                "<strong>Reach:</strong> How many people/users will this affect?",
+                "<strong>Impact:</strong> How much will it improve their experience? (0.25 = minimal, 3 = massive)",
+                "<strong>Confidence:</strong> How certain are you? (0-100%)",
+                "<strong>Effort:</strong> Time/resources required (person-months)"
+            ],
+            when: "Comparing multiple features; need objective scoring to justify decisions"
+        },
+        moscow: {
+            name: "MoSCoW Method",
+            emoji: "📋",
+            categories: [
+                "<strong>Must-Have:</strong> Critical for success; project fails without it",
+                "<strong>Should-Have:</strong> Important but not vital; workarounds exist",
+                "<strong>Could-Have:</strong> Nice to have if time/budget allows",
+                "<strong>Won't-Have:</strong> Explicitly out of scope for this release"
+            ],
+            when: "Time-constrained projects; need clear scope boundaries; stakeholder alignment"
+        },
+        kano: {
+            name: "Kano Model",
+            emoji: "😊",
+            categories: [
+                "<strong>Basic Expectations:</strong> Must-haves; absence causes dissatisfaction",
+                "<strong>Performance Attributes:</strong> More is better; linear satisfaction increase",
+                "<strong>Delighters:</strong> Unexpected features; absence doesn't cause dissatisfaction",
+                "<strong>Indifferent:</strong> Customers don't care either way",
+                "<strong>Reverse:</strong> Feature actually decreases satisfaction"
+            ],
+            when: "Understanding customer psychology; balancing table stakes vs. differentiation"
+        },
+        valueEffort: {
+            name: "Value vs Effort Matrix",
+            emoji: "⚡",
+            quadrants: [
+                "<strong>Quick Wins</strong> (High Value, Low Effort) → Do first",
+                "<strong>Big Bets</strong> (High Value, High Effort) → Strategic investments",
+                "<strong>Hard Slogs</strong> (Low Value, High Effort) → Avoid or deprioritize",
+                "<strong>Time Sinks</strong> (Low Value, Low Effort) → Skip unless trivial"
+            ],
+            when: "Portfolio planning; balancing short-term wins vs. long-term bets"
+        }
+    };
+
+    // ============================================================
     // QUESTIONS DATA
     // ============================================================
     const questions = [
         {
             id: 1,
-            scenario: "It's early 2005 in Seattle. Jeff Bezos has just launched Amazon Prime — a bold experiment charging customers $79/year for unlimited free two-day shipping. The team has delivered 50,000 memberships in the first six weeks, far exceeding internal projections.\n\nBut Prime Product Manager Greg Greeley faces a critical decision. The Prime roadmap has five potential features, each requiring significant engineering resources:\n\n1. **Prime Video Streaming** - License 5,000 movies/TV shows for unlimited streaming (Engineering: 8 months, 25 engineers)\n2. **Prime Early Access** - Give Prime members 30-minute early access to Lightning Deals (Engineering: 2 months, 5 engineers)\n3. **Prime Photos** - Unlimited photo storage in the cloud (Engineering: 6 months, 15 engineers)\n4. **Same-Day Delivery** - Launch same-day delivery in 10 major metros (Engineering: 4 months, 20 engineers)\n5. **Prime Music** - Ad-free music streaming with 2M songs (Engineering: 10 months, 30 engineers)\n\nGreeley's team estimates:\n- Prime Video would reach 80% of members, dramatically increase perceived value (9/10 impact), high confidence it works (90%)\n- Early Access would reach 60% of members, moderate value increase (6/10 impact), very high confidence (95%)\n- Prime Photos would reach 40% of members, high value to photo enthusiasts (8/10 impact), medium confidence (70%)\n- Same-Day Delivery would reach 15% of members initially, very high value (10/10 impact), low confidence in profitability (50%)\n- Prime Music would reach 70% of members, high value (8/10 impact), medium confidence in licensing deals (60%)\n\nAs PM, how do you prioritize using the RICE framework?",
+            scenario: `**Seattle, Early 2005**
+
+It's early 2005 in Seattle. Jeff Bezos has just launched Amazon Prime — a bold experiment charging customers $79/year for unlimited free two-day shipping. The team has delivered 50,000 memberships in the first six weeks, far exceeding internal projections.
+
+**The Challenge**
+
+Prime Product Manager Greg Greeley faces a critical decision. The Prime roadmap has five potential features, each requiring significant engineering resources:
+
+**Feature Options:**
+
+1. **Prime Video Streaming**
+   - License 5,000 movies/TV shows for unlimited streaming
+   - Engineering: 8 months, 25 engineers
+
+2. **Prime Early Access**
+   - Give Prime members 30-minute early access to Lightning Deals
+   - Engineering: 2 months, 5 engineers
+
+3. **Prime Photos**
+   - Unlimited photo storage in the cloud
+   - Engineering: 6 months, 15 engineers
+
+4. **Same-Day Delivery**
+   - Launch same-day delivery in 10 major metros
+   - Engineering: 4 months, 20 engineers
+
+5. **Prime Music**
+   - Ad-free music streaming with 2M songs
+   - Engineering: 10 months, 30 engineers
+
+**Team Estimates:**
+
+• **Prime Video:** 80% reach, 9/10 impact, 90% confidence
+• **Early Access:** 60% reach, 6/10 impact, 95% confidence
+• **Prime Photos:** 40% reach, 8/10 impact, 70% confidence
+• **Same-Day Delivery:** 15% reach, 10/10 impact, 50% confidence (profitability uncertain)
+• **Prime Music:** 70% reach, 8/10 impact, 60% confidence (licensing deals uncertain)`,
             question: "Using RICE scoring (Reach × Impact × Confidence ÷ Effort), which feature should Amazon prioritize first?",
             frameworks: "RICE Framework",
             options: [
@@ -149,7 +238,31 @@
         },
         {
             id: 2,
-            scenario: "It's mid-2014 in Seattle. Amazon Prime has grown to 25 million members, but VP of Prime Cem Sibay is concerned about member engagement. Internal data shows that Prime members who only use shipping benefits have a 78% annual retention rate, but members who use 2+ Prime benefits have a 96% retention rate.\n\nSibay convenes the Prime product team with a challenge: \"We need to decide what goes into the next Prime benefit bundle. We have budget for 3 major initiatives this year, but we've identified 8 potential features:\"\n\n1. **Prime Pantry** - Subscribe & Save for household staples (toilet paper, detergent) with auto-delivery\n2. **Prime Wardrobe** - Try before you buy for clothing (order 8 items, keep what you want, return the rest free)\n3. **Prime Reading** - Unlimited access to 1,000+ Kindle ebooks and magazines\n4. **Prime Gaming** - Free monthly PC games and in-game loot for Twitch users\n5. **Amazon Key** - In-home delivery (camera + smart lock lets delivery drivers enter your garage)\n6. **Prime Student** - 50% discount for college students with .edu email verification\n7. **Prime Day** - Annual 36-hour exclusive sale event for Prime members only\n8. **Whole Foods Discount** - 10% off all purchases at Whole Foods stores\n\nThe engineering budget allows for 3 features. As PM, how do you categorize these using MoSCoW?",
+            scenario: `**Seattle, Mid-2014**
+
+Amazon Prime has grown to 25 million members, but VP of Prime Cem Sibay is concerned about member engagement. Internal data shows a critical pattern:
+
+• **Shipping-only members:** 78% annual retention
+• **Multi-benefit members (2+ benefits):** 96% annual retention
+
+**The Challenge**
+
+Sibay challenges the Prime product team: "We have budget for 3 major initiatives this year, but we've identified 8 potential features:"
+
+**Feature Options:**
+
+1. **Prime Pantry** - Subscribe & Save for household staples with auto-delivery
+2. **Prime Wardrobe** - Try before you buy for clothing (order 8 items, keep what you want)
+3. **Prime Reading** - Unlimited access to 1,000+ Kindle ebooks and magazines
+4. **Prime Gaming** - Free monthly PC games and in-game loot for Twitch users
+5. **Amazon Key** - In-home delivery (camera + smart lock for garage delivery)
+6. **Prime Student** - 50% discount for college students with .edu verification
+7. **Prime Day** - Annual 36-hour exclusive sale event for Prime members
+8. **Whole Foods Discount** - 10% off all purchases at Whole Foods stores
+
+**The Constraint**
+
+Engineering budget allows for **3 features only**.`,
             question: "Which features are Must-Have, Should-Have, Could-Have, and Won't-Have for 2014?",
             frameworks: "MoSCoW Method",
             options: [
@@ -177,7 +290,36 @@
         },
         {
             id: 3,
-            scenario: "It's early 2017 in Seattle. Amazon has just acquired Whole Foods for $13.7 billion, and CEO Jeff Bezos tasks VP of Prime Greg Greeley with a challenge: \"Integrate Whole Foods into Prime in a way that drives grocery adoption but doesn't cannibalize our Amazon Fresh and Prime Now businesses.\"\n\nGreeley's team conducts extensive user research and identifies three types of Prime member grocery shoppers:\n\n**Segment A: \"Convenience Seekers\" (40% of Prime members)**\n- Currently use Prime Now for quick household staples delivery\n- Shop at Whole Foods 0-1 times per month in-store\n- Want: Fast delivery (< 2 hours), don't care about brand\n- Pain points: Delivery fees add up, limited selection on Prime Now\n\n**Segment B: \"Quality Enthusiasts\" (25% of Prime members)**\n- Shop at Whole Foods 3-5 times per month in-store\n- Willing to pay premium for organic/high-quality groceries\n- Want: Best products, in-store experience, knowledgeable staff\n- Pain points: Whole Foods is expensive, not always convenient\n\n**Segment C: \"Budget Families\" (35% of Prime members)**\n- Shop at Walmart/Target for groceries, rarely at Whole Foods\n- Price-sensitive, need to feed families on tight budgets\n- Want: Lowest prices, bulk options, familiar brands\n- Pain points: Whole Foods is \"Whole Paycheck,\" too expensive\n\nThe team proposes four potential features:\n\n1. **10% off all Whole Foods purchases for Prime members** (appeals to Segments A & B)\n2. **Free 2-hour delivery from Whole Foods via Prime Now** (appeals to Segments A & B)\n3. **Exclusive Whole Foods 365 budget line with Prime-only pricing** (appeals to Segment C)\n4. **Prime member-only express checkout lanes at Whole Foods** (appeals to Segment B)\n\nAs PM, how do you apply the Kano Model to categorize these features?",
+            scenario: `**Seattle, Early 2017**
+
+Amazon has just acquired Whole Foods for $13.7 billion. CEO Jeff Bezos tasks VP of Prime Greg Greeley: "Integrate Whole Foods into Prime in a way that drives grocery adoption but doesn't cannibalize our Amazon Fresh and Prime Now businesses."
+
+**Customer Research: Three Shopper Segments**
+
+**Segment A: "Convenience Seekers" (40% of Prime members)**
+• Currently use Prime Now for quick household staples
+• Shop at Whole Foods 0-1 times/month in-store
+• **Want:** Fast delivery (< 2 hours), don't care about brand
+• **Pain:** Delivery fees add up, limited Prime Now selection
+
+**Segment B: "Quality Enthusiasts" (25% of Prime members)**
+• Shop at Whole Foods 3-5 times/month in-store
+• Willing to pay premium for organic/high-quality groceries
+• **Want:** Best products, in-store experience, knowledgeable staff
+• **Pain:** Whole Foods is expensive, not always convenient
+
+**Segment C: "Budget Families" (35% of Prime members)**
+• Shop at Walmart/Target for groceries, rarely at Whole Foods
+• Price-sensitive, need to feed families on tight budgets
+• **Want:** Lowest prices, bulk options, familiar brands
+• **Pain:** Whole Foods is "Whole Paycheck," too expensive
+
+**Proposed Features:**
+
+1. **10% off all Whole Foods purchases** for Prime members (appeals to Segments A & B)
+2. **Free 2-hour delivery from Whole Foods** via Prime Now (appeals to Segments A & B)
+3. **Exclusive Whole Foods 365 budget line** with Prime-only pricing (appeals to Segment C)
+4. **Prime member-only express checkout lanes** at Whole Foods (appeals to Segment B)`,
             question: "Using the Kano Model, categorize these features as Basic, Performance, or Delighter attributes:",
             frameworks: "Kano Model",
             options: [
@@ -205,14 +347,68 @@
         },
         {
             id: 4,
-            scenario: "It's late 2019 in Seattle. Amazon Prime has reached 112 million US members, but Product VP Jamil Ghani sees a troubling trend: **Prime member engagement in India is plateauing at 15 million members despite India having 1.4 billion people.**\n\nGhani's team has identified the core problem: India's e-commerce market is fundamentally different from the US. Indian consumers are highly price-sensitive, 80% of transactions are cash-on-delivery, and delivery addresses are often imprecise (\"third house after the temple, blue gate\").\n\nThe team proposes 10 potential features to accelerate India growth:\n\n1. **Prime Video India Originals** - Commission 50 Hindi/Tamil/Telugu original shows (High value, 12-month timeline)\n2. **Prime Lite** - ₹500/year plan ($7/year) with slower delivery, limited video (Medium value, 3-month timeline)\n3. **Hyperlocal grocery delivery** - Partner with local kirana stores for 2-hour delivery (High value, 18-month timeline)\n4. **Cash-on-delivery for Prime members** - Waive ₹50 COD fee for Prime subscribers (Medium value, 2-month timeline)\n5. **Amazon Pay Prime Rewards** - 5% cashback on all UPI transactions (High value, 6-month timeline)\n6. **Prime Mobile Recharge** - Bundled phone credits with Prime membership (Low value, 9-month timeline)\n7. **Vernacular UI** - Full app experience in 10 Indian languages (High value, 8-month timeline)\n8. **Train booking integration** - Book IRCTC train tickets through Prime (Medium value, 12-month timeline)\n9. **Amazon Fresh hyperlocal** - 90-minute grocery delivery in 6 metros (Very high value, 15-month timeline)\n10. **Student Prime India** - ₹300/year ($4/year) for students with college ID (Medium value, 4-month timeline)\n\nThe team has budget for **4 initiatives** in 2020. As PM, how do you use the Value vs Effort matrix to prioritize?",
+            scenario: `**Seattle, Late 2019**
+
+Amazon Prime has reached 112 million US members, but Product VP Jamil Ghani sees a troubling trend:
+
+**The India Problem:**
+Prime member engagement in India is plateauing at 15 million members despite India having 1.4 billion people.
+
+**Core Challenge:**
+
+India's e-commerce market is fundamentally different:
+• 80% of transactions are cash-on-delivery
+• Delivery addresses are often imprecise ("third house after the temple, blue gate")
+• Consumers are highly price-sensitive
+
+**Proposed Features (2020 Budget: 4 initiatives):**
+
+1. **Prime Video India Originals**
+   - Commission 50 Hindi/Tamil/Telugu original shows
+   - Value: High | Timeline: 12 months
+
+2. **Prime Lite**
+   - ₹500/year plan ($7/year) with slower delivery, limited video
+   - Value: Medium | Timeline: 3 months
+
+3. **Hyperlocal Grocery Delivery**
+   - Partner with local kirana stores for 2-hour delivery
+   - Value: High | Timeline: 18 months
+
+4. **Cash-on-Delivery Fee Waiver**
+   - Waive ₹50 COD fee for Prime subscribers
+   - Value: Medium | Timeline: 2 months
+
+5. **Amazon Pay Prime Rewards**
+   - 5% cashback on all UPI transactions
+   - Value: High | Timeline: 6 months
+
+6. **Prime Mobile Recharge**
+   - Bundled phone credits with Prime membership
+   - Value: Low | Timeline: 9 months
+
+7. **Vernacular UI**
+   - Full app experience in 10 Indian languages
+   - Value: High | Timeline: 8 months
+
+8. **Train Booking Integration**
+   - Book IRCTC train tickets through Prime
+   - Value: Medium | Timeline: 12 months
+
+9. **Amazon Fresh Hyperlocal**
+   - 90-minute grocery delivery in 6 metros
+   - Value: Very High | Timeline: 15 months
+
+10. **Student Prime India**
+    - ₹300/year ($4/year) for students with college ID
+    - Value: Medium | Timeline: 4 months`,
             question: "Plot these on Value vs Effort and select the 4 features to build in 2020:",
             frameworks: "Value vs Effort Matrix",
             options: [
                 {
                     text: "Quick Wins (High Value, Low Effort): Prime Lite, Student Prime, Cash-on-Delivery, Amazon Pay Rewards — ship all 4 quick wins to maximize near-term impact",
                     points: 7,
-                    feedback: "**Mohan Simham's Comments:**\n\nYou've correctly identified the **Quick Wins quadrant** — features with high value and low effort that should be prioritized. Let's examine your selections:\n\n✅ **Prime Lite** (₹500/year) - High value, 3-month timeline: CORRECT\n✅ **Student Prime** (₹300/year) - Medium value, 4-month timeline: CORRECT  \n✅ **Cash-on-Delivery** - Medium value, 2-month timeline: CORRECT\n✅ **Amazon Pay Rewards** - High value, 6-month timeline: BORDERLINE\n\nHere's the issue: Amazon Pay Rewards (6 months) is borderline Low/Medium Effort. If you only select Quick Wins, you're **ignoring strategic Big Bets** that create long-term competitive moat.\n\nThe **Value vs Effort framework** actually recommends a **portfolio approach**:\n- 2-3 Quick Wins for near-term momentum ✓\n- 1-2 Big Bets for strategic differentiation ✗ (you missed this)\n- 0 Hard Slogs (high effort, low value)\n- Deprioritize Time Sinks (low value, low effort)\n\nYour missing Big Bet candidates:\n- **Prime Video India Originals** (High value, 12-month) - Creates Netflix-level competitive moat\n- **Vernacular UI** (High value, 8-month) - Unlocks non-English speakers (60% of India)\n\nAmazon's actual 2020 India strategy: Prime Lite (2021), Video Originals (2019-2020), Vernacular UI (2020), Pay Rewards (2019-2020). They balanced Quick Wins + Big Bets.\n\nYour Quick Win focus would give near-term growth but sacrifice long-term moat."
+                    feedback: "**Mohan Simham's Comments:**\n\nYou've correctly identified the **Quick Wins quadrant** — features with high value and low effort that should be prioritized. Let's examine your selections:\n\n✅ **Prime Lite** (₹500/year) - High value, 3-month timeline: CORRECT\n✅ **Student Prime** (₹300/year) - Medium value, 4-month timeline: CORRECT  \n✅ **Cash-on-Delivery** - Medium value, 2-month timeline: CORRECT\n✅ **Amazon Pay Rewards** - High value, 6-month timeline: BORDERLINE\n\nHere's the issue: Amazon Pay Rewards (6 months) is borderline Low/Medium Effort. If you only select Quick Wins, you're **ignoring strategic Big Bets** that create long-term competitive moat.\n\nThe **Value vs Effort Matrix** actually recommends a **portfolio approach**:\n- 2-3 Quick Wins for near-term momentum ✓\n- 1-2 Big Bets for strategic differentiation ✗ (you missed this)\n- 0 Hard Slogs (high effort, low value)\n- Deprioritize Time Sinks (low value, low effort)\n\nYour missing Big Bet candidates:\n- **Prime Video India Originals** (High value, 12-month) - Creates Netflix-level competitive moat\n- **Vernacular UI** (High value, 8-month) - Unlocks non-English speakers (60% of India)\n\nAmazon's actual 2020 India strategy: Prime Lite (2021), Video Originals (2019-2020), Vernacular UI (2020), Pay Rewards (2019-2020). They balanced Quick Wins + Big Bets.\n\nYour Quick Win focus would give near-term growth but sacrifice long-term moat."
                 },
                 {
                     text: "Balanced Portfolio: Quick Wins (Prime Lite, Cash-on-Delivery), Big Bets (Prime Video Originals, Vernacular UI) — mix short-term wins with long-term strategic bets",
@@ -233,7 +429,47 @@
         },
         {
             id: 5,
-            scenario: "It's mid-2020 in Seattle. The COVID-19 pandemic has caused an unprecedented surge in Prime membership — 50 million new members joined between March and August 2020. But VP of Prime Subscriptions Dan Browne sees a concerning trend: **30-day retention for these new 'pandemic cohort' members is 15 percentage points lower than the 2019 baseline.**\n\nBrowne's team hypothesizes the problem: these new members joined primarily for pandemic shipping needs (toilet paper, hand sanitizer, groceries), but they haven't discovered Prime's other benefits. Data shows:\n\n- 85% of pandemic cohort has used shipping, but only 15% have tried Prime Video\n- Average pandemic member uses 1.2 Prime benefits vs. 3.4 for pre-pandemic members\n- Members who use 3+ benefits have 95% annual retention; 1-benefit members have 72% retention\n\nBrowne's team proposes a retention initiative with 6 potential interventions:\n\n1. **Onboarding email series** - 7-email campaign highlighting Video, Music, Reading, Photos over 30 days (Effort: 2 weeks, Expected lift: +3% retention)\n2. **In-app benefit discovery widget** - Persistent banner showing \"unused Prime benefits\" on homepage (Effort: 1 month, Expected lift: +5% retention)\n3. **First Video Watch incentive** - Give $5 Prime Video credit after first stream (Effort: 2 months, Expected lift: +8% retention)\n4. **Prime benefit quiz** - Fun 5-question quiz that recommends personalized benefits (Effort: 6 weeks, Expected lift: +4% retention)\n5. **Cross-benefit discount** - 20% off first Whole Foods order if you watch Prime Video (Effort: 3 months, Expected lift: +10% retention)\n6. **Mandatory benefit activation** - Require new members to activate 2 benefits during signup (Effort: 1 week, Expected lift: +12% retention but -8% signup conversion)\n\nAs PM, which initiative should you prioritize using RICE?",
+            scenario: `**Seattle, Mid-2020**
+
+The COVID-19 pandemic has caused an unprecedented surge: 50 million new Prime members joined between March and August 2020.
+
+**The Retention Crisis**
+
+VP of Prime Subscriptions Dan Browne sees a concerning trend:
+
+**30-day retention for pandemic cohort: 15 percentage points LOWER than 2019 baseline**
+
+**Root Cause Analysis:**
+• 85% of pandemic cohort used shipping, only 15% tried Prime Video
+• Average pandemic member uses 1.2 Prime benefits vs. 3.4 for pre-pandemic members
+• **Members using 3+ benefits:** 95% annual retention
+• **Members using 1 benefit:** 72% annual retention
+
+**Proposed Retention Initiatives (Must ship in 6 weeks):**
+
+1. **Onboarding Email Series**
+   - 7-email campaign highlighting Video, Music, Reading, Photos over 30 days
+   - Effort: 2 weeks | Expected lift: +3% retention
+
+2. **In-App Benefit Discovery Widget**
+   - Persistent banner showing "unused Prime benefits" on homepage
+   - Effort: 1 month | Expected lift: +5% retention
+
+3. **First Video Watch Incentive**
+   - Give $5 Prime Video credit after first stream
+   - Effort: 2 months | Expected lift: +8% retention
+
+4. **Prime Benefit Quiz**
+   - Fun 5-question quiz recommending personalized benefits
+   - Effort: 6 weeks | Expected lift: +4% retention
+
+5. **Cross-Benefit Discount**
+   - 20% off first Whole Foods order if you watch Prime Video
+   - Effort: 3 months | Expected lift: +10% retention
+
+6. **Mandatory Benefit Activation**
+   - Require new members to activate 2 benefits during signup
+   - Effort: 1 week | Expected lift: +12% retention BUT -8% signup conversion`,
             question: "Calculate RICE scores and identify the top priority (assume 50M pandemic members, 1-year timeframe):",
             frameworks: "RICE Framework (Retention Focus)",
             options: [
@@ -261,7 +497,43 @@
         },
         {
             id: 6,
-            scenario: "It's early 2022 in Seattle. Amazon Prime has announced its first-ever price increase in 4 years: from $119/year to $139/year (17% increase). VP of Prime Jamil Ghani knows this will cause churn, but CFO Brian Olsavsky has mandated the increase to offset rising shipping and content costs ($7B+ in Prime Video/Music content annually).\n\nGhani's team is tasked with minimizing churn from the price increase. They've segmented Prime members into behavioral cohorts and identified retention risks:\n\n**Segment A: \"Shipping-Only Users\" (30% of members, 85% retention risk)**\n- Use only free shipping benefit, rarely or never use Video/Music/Photos\n- Joined for convenience, price-sensitive\n- At $139/year, shipping-only value proposition is weak (avg 24 orders/year × $5 shipping = $120 value)\n\n**Segment B: \"Multi-Benefit Power Users\" (45% of members, 15% retention risk)**\n- Use 4+ Prime benefits regularly (shipping, video, music, photos, Whole Foods)\n- High engagement, low churn risk\n- Perceive $139 as a bargain ($12/month for shipping + streaming bundles)\n\n**Segment C: \"Casual Streamers\" (25% of members, 45% retention risk)**\n- Primarily use Prime Video (2-3 hours/week), occasional shipping\n- Comparing Prime to Netflix ($15.49), Hulu ($14.99), HBO Max ($15.99)\n- Ambivalent about Prime — \"it's fine but not essential\"\n\nThe team proposes 5 initiatives to reduce price-increase churn, but they can only ship 2 before the price increase takes effect in 6 weeks:\n\n1. **Student/Low-Income Discount** - Offer $79/year Prime for students, EBT cardholders (Must-Have: protects vulnerable segments)\n2. **Shipping-Only Lite Tier** - Launch $79/year tier with free shipping but no video/music (Should-Have: retains Segment A)\n3. **Exclusive Thursday Night Football** - Accelerate NFL deal announcement (Must-Have: major content exclusive for Segment C)\n4. **Multi-year discount** - Offer $119/year if members pre-pay 2 years upfront (Could-Have: locks in members at old price)\n5. **Benefit usage dashboard** - Show members their \"Prime savings\" to justify value (Won't-Have: too complex for 6-week timeline)\n\nAs PM, how do you apply MoSCoW to prioritize the 2 features to ship in 6 weeks?",
+            scenario: `**Seattle, Early 2022**
+
+Amazon Prime announces its first-ever price increase in 4 years: **$119/year → $139/year (17% increase)**
+
+**The Challenge**
+
+VP of Prime Jamil Ghani knows this will cause churn, but CFO Brian Olsavsky has mandated the increase to offset rising costs ($7B+ annually in Prime Video/Music content).
+
+**Member Segmentation & Retention Risk:**
+
+**Segment A: "Shipping-Only Users" (30% of members)**
+• **Retention Risk:** 85%
+• Use only free shipping, rarely/never use Video/Music/Photos
+• At $139/year, value proposition is weak (avg 24 orders/year × $5 shipping = $120 value)
+
+**Segment B: "Multi-Benefit Power Users" (45% of members)**
+• **Retention Risk:** 15%
+• Use 4+ Prime benefits regularly (shipping, video, music, photos, Whole Foods)
+• Perceive $139 as bargain ($12/month for shipping + streaming bundles)
+
+**Segment C: "Casual Streamers" (25% of members)**
+• **Retention Risk:** 45%
+• Primarily use Prime Video (2-3 hours/week), occasional shipping
+• Comparing Prime to Netflix ($15.49), Hulu ($14.99), HBO Max ($15.99)
+• "It's fine but not essential"
+
+**Proposed Initiatives (Must ship 2 in 6 weeks):**
+
+1. **Student/Low-Income Discount** - $79/year for students, EBT cardholders (Must-Have: protects vulnerable segments)
+
+2. **Shipping-Only Lite Tier** - $79/year with free shipping but no video/music (Should-Have: retains Segment A)
+
+3. **Exclusive Thursday Night Football** - Accelerate NFL deal announcement (Must-Have: major content exclusive)
+
+4. **Multi-Year Discount** - $119/year if members pre-pay 2 years upfront (Could-Have: locks in old price)
+
+5. **Benefit Usage Dashboard** - Show "Prime savings" to justify value (Won't-Have: too complex for 6-week timeline)`,
             question: "Using MoSCoW, which 2 features are Must-Have and should ship before the price increase?",
             frameworks: "MoSCoW Method (Crisis Mode)",
             options: [
@@ -289,7 +561,35 @@
         },
         {
             id: 7,
-            scenario: "It's late 2021 in Seattle. Amazon Pharmacy has been operating for one year (launched November 2020) offering mail-order prescription delivery. VP of Amazon Pharmacy TJ Parker (acquired from PillPack) sees an opportunity to integrate Pharmacy into Prime.\n\nParker presents to Prime leadership: \"We have 1.2M active Amazon Pharmacy customers. But only 30% are Prime members, despite Prime members being our highest-value retail customers. We need to make Pharmacy a Prime benefit to drive adoption.\"\n\nThe team identifies three potential Prime Pharmacy features:\n\n**Option A: RxPass - Unlimited Generic Prescriptions**\n- $5/month add-on for Prime members (included with Prime for free initially as promotion)\n- Unlimited supply of 50 common generic medications (blood pressure, diabetes, cholesterol, etc.)\n- Targets chronic condition patients who take 3-5 medications daily\n- Kano Classification: **Performance Attribute** (more medications covered = more value)\n- Market research: 40% of Prime members take prescription medications regularly\n\nBut there's tension:\n- **Basic Expectation perspective**: Customers expect Prime to include existing categories (shipping, video), not require add-ons\n- **Delighter perspective**: Unlimited generics for a flat fee is unprecedented — no competitor (CVS, Walgreens, Express Scripts) offers this\n\n**Option B: Prime Member Prescription Discounts**\n- Automatic 20% discount on brand-name drugs, 50% on generics (no add-on fee)\n- Simple integration — just log in to Amazon Pharmacy with Prime account\n- Kano Classification: **Basic Expectation** (Prime members expect discounts on Amazon services)\n- Market research: 75% of Prime members would use pharmacy IF they got Prime member pricing\n\n**Option C: Same-Day Prescription Delivery**\n- Free same-day delivery for urgent prescriptions in 10 major metros\n- Requires partnership with local pharmacies + courier network\n- Kano Classification: **Delighter** (no one expects same-day prescription delivery; it's magical when it works)\n- Market research: 20% of prescriptions are \"urgent\" (antibiotics, pain meds, emergency refills)\n\nAs PM, how do you apply the Kano Model to decide which feature to launch first?",
+            scenario: `**Seattle, Late 2021**
+
+Amazon Pharmacy has been operating for one year (launched November 2020) offering mail-order prescription delivery.
+
+**The Integration Opportunity**
+
+VP of Amazon Pharmacy TJ Parker presents to Prime leadership: "We have 1.2M active Amazon Pharmacy customers. But only 30% are Prime members, despite Prime members being our highest-value retail customers."
+
+**Proposed Prime Pharmacy Features:**
+
+**Option A: RxPass - Unlimited Generic Prescriptions**
+• $5/month add-on for Prime members (free initially as promotion)
+• Unlimited supply of 50 common generic medications (blood pressure, diabetes, cholesterol)
+• **Target:** Chronic condition patients taking 3-5 medications daily
+• **Market Research:** 40% of Prime members take prescription medications regularly
+
+**The Tension:**
+- **Basic Expectation view:** Customers expect Prime to include existing categories, not require add-ons
+- **Delighter view:** Unlimited generics for flat fee is unprecedented — no competitor offers this
+
+**Option B: Prime Member Prescription Discounts**
+• Automatic 20% discount on brand-name drugs, 50% on generics (no add-on fee)
+• Simple integration — just log in with Prime account
+• **Market Research:** 75% of Prime members would use pharmacy IF they got member pricing
+
+**Option C: Same-Day Prescription Delivery**
+• Free same-day delivery for urgent prescriptions in 10 major metros
+• Requires partnership with local pharmacies + courier network
+• **Market Research:** 20% of prescriptions are "urgent" (antibiotics, pain meds, emergency refills)`,
             question: "Using Kano Model, which feature should Amazon prioritize to integrate Pharmacy into Prime?",
             frameworks: "Kano Model (Healthcare Context)",
             options: [
@@ -317,7 +617,48 @@
         },
         {
             id: 8,
-            scenario: "It's early 2023 in Seattle. Amazon Prime Video is facing its biggest competitive threat yet: the streaming wars have intensified with Disney+ (164M subscribers), Netflix (231M), HBO Max (98M), Apple TV+ (40M), and Paramount+ (67M) all fighting for viewer attention.\n\nVP of Prime Video Mike Hopkins presents a concerning trend to Prime leadership: \"Prime Video engagement has plateaued. Our average Prime member watches 3.2 hours/week of Prime Video, down from 4.1 hours/week in 2021. Meanwhile, Netflix members average 6.8 hours/week.\"\n\nHopkins' team identifies the core problem: **content discovery**. Prime Video's catalog has 24,000+ movies and TV shows, but members watch the same 200-300 titles repeatedly. The vast majority of the catalog is undiscovered.\n\nThe team proposes 5 initiatives to improve content discovery and increase viewing hours:\n\n1. **AI-Powered Personalized Homepage** - ML algorithm that learns viewing patterns and surfaces hidden gems (High value, 6-month timeline, 20 engineers)\n2. **\"Top 10 Trending\" Row** - Netflix-style top 10 most-watched shows updated daily (Medium value, 1-month timeline, 3 engineers)\n3. **\"Because You Watched X\" Recommendations** - Show related content based on watch history (High value, 3-month timeline, 8 engineers)\n4. **Genre-Based Channels** - Curate themed channels like \"90s Action,\" \"British Mysteries,\" \"Award Winners\" (Medium value, 4-month timeline, 10 engineers)\n5. **Interactive Polls & Quizzes** - Fun content discovery through \"Which character are you?\" quizzes that recommend shows (Low value, 5-month timeline, 12 engineers)\n\nAs PM, how do you use Value vs Effort Matrix to prioritize for Q1-Q2 2023 roadmap?",
+            scenario: `**Seattle, Early 2023**
+
+Amazon Prime Video faces its biggest competitive threat: the streaming wars have intensified.
+
+**The Competition:**
+• Disney+: 164M subscribers
+• Netflix: 231M subscribers  
+• HBO Max: 98M subscribers
+• Apple TV+: 40M subscribers
+• Paramount+: 67M subscribers
+
+**The Engagement Problem**
+
+VP of Prime Video Mike Hopkins presents a concerning trend:
+
+"Prime Video engagement has plateaued. Our average Prime member watches **3.2 hours/week** of Prime Video, down from 4.1 hours/week in 2021. Meanwhile, Netflix members average **6.8 hours/week**."
+
+**Root Cause: Content Discovery**
+
+Prime Video's catalog has 24,000+ movies and TV shows, but members watch the same 200-300 titles repeatedly. The vast majority of the catalog is undiscovered.
+
+**Proposed Solutions (Q1-Q2 2023 Roadmap):**
+
+1. **AI-Powered Personalized Homepage**
+   - ML algorithm that learns viewing patterns and surfaces hidden gems
+   - Value: High | Timeline: 6 months | Team: 20 engineers
+
+2. **"Top 10 Trending" Row**
+   - Netflix-style top 10 most-watched shows updated daily
+   - Value: Medium | Timeline: 1 month | Team: 3 engineers
+
+3. **"Because You Watched X" Recommendations**
+   - Show related content based on watch history
+   - Value: High | Timeline: 3 months | Team: 8 engineers
+
+4. **Genre-Based Channels**
+   - Curate themed channels like "90s Action," "British Mysteries," "Award Winners"
+   - Value: Medium | Timeline: 4 months | Team: 10 engineers
+
+5. **Interactive Polls & Quizzes**
+   - Fun content discovery through "Which character are you?" quizzes
+   - Value: Low | Timeline: 5 months | Team: 12 engineers`,
             question: "Plot these features on Value vs Effort Matrix and select the optimal portfolio:",
             frameworks: "Value vs Effort Matrix (Streaming Context)",
             options: [
@@ -345,7 +686,43 @@
         },
         {
             id: 9,
-            scenario: "It's mid-2023 in Seattle. Amazon has just announced a major strategic shift: NFL Sunday Ticket (Google/YouTube's exclusive package) negotiations have stalled, and Amazon is bidding aggressively for NBA and MLB streaming rights to complement Thursday Night Football.\n\nVP of Prime Video Sports Jay Marine presents to Prime leadership: \"Sports is the last remaining content category where linear TV dominates streaming. We have an opportunity to make Prime the home of live sports — but we need to decide which sports packages to prioritize.\"\n\nThe team has identified 6 potential sports rights packages with varying costs and expected impact:\n\n1. **NBA Regular Season Package** - 75 games/year, $2.5B/year, 40M expected viewers (High reach, Very High cost)\n2. **MLB Friday Night Package** - 50 games/year, $500M/year, 12M expected viewers (Medium reach, Medium cost)\n3. **Premier League Soccer** - 150 games/year, $1.2B/year, 25M expected viewers (High reach internationally, High cost)\n4. **UFC/MMA Fight Nights** - 30 events/year, $800M/year, 15M expected viewers (Dedicated fanbase, High cost)\n5. **College Football Playoff** - 12 games/year, $1.8B/year, 35M expected viewers (Very high reach, Very High cost)\n6. **Women's Sports Bundle** - WNBA + NWSL, $200M/year, 8M expected viewers (Growing category, Low cost)\n\nMarine's team estimates:\n- Each million sports viewers drives 2.5% increase in Prime member retention (sports viewers are 40% less likely to churn)\n- Sports rights are 5-10 year commitments (can't easily exit)\n- Younger demographics (18-34) over-index 3× on sports viewing vs. 55+ demos\n\nThe CFO has approved budget for **2 sports packages** totaling max $3B/year. As PM, how do you use RICE to prioritize?",
+            scenario: `**Seattle, Mid-2023**
+
+Amazon announces a major strategic shift: NFL Sunday Ticket (Google/YouTube's exclusive package) negotiations have stalled, and Amazon is bidding aggressively for NBA and MLB streaming rights to complement Thursday Night Football.
+
+**The Sports Strategy**
+
+VP of Prime Video Sports Jay Marine presents to Prime leadership:
+
+"Sports is the last remaining content category where linear TV dominates streaming. We have an opportunity to make Prime the home of live sports — but we need to decide which sports packages to prioritize."
+
+**Available Sports Rights Packages:**
+
+1. **NBA Regular Season Package**
+   - 75 games/year | Cost: $2.5B/year | Expected viewers: 40M
+
+2. **MLB Friday Night Package**
+   - 50 games/year | Cost: $500M/year | Expected viewers: 12M
+
+3. **Premier League Soccer**
+   - 150 games/year | Cost: $1.2B/year | Expected viewers: 25M (strong international reach)
+
+4. **UFC/MMA Fight Nights**
+   - 30 events/year | Cost: $800M/year | Expected viewers: 15M (dedicated fanbase)
+
+5. **College Football Playoff**
+   - 12 games/year | Cost: $1.8B/year | Expected viewers: 35M
+
+6. **Women's Sports Bundle (WNBA + NWSL)**
+   - Cost: $200M/year | Expected viewers: 8M (growing category)
+
+**Key Insights:**
+• Each million sports viewers drives **2.5% increase** in Prime member retention
+• Sports viewers are **40% less likely to churn**
+• Sports rights are **5-10 year commitments** (can't easily exit)
+• Younger demographics (18-34) over-index **3×** on sports viewing vs. 55+ demos
+
+**Budget Constraint:** CFO approved **2 sports packages totaling max $3B/year**`,
             question: "Calculate RICE scores for sports packages and select the optimal 2-package portfolio (assume Confidence = 0.8 for all, Effort = cost in $B):",
             frameworks: "RICE Framework (Content Licensing)",
             options: [
@@ -373,7 +750,61 @@
         },
         {
             id: 10,
-            scenario: "It's late 2024 in Seattle. Amazon Prime has reached a milestone: **200 million US members (out of ~130M US households).** This means Prime has achieved **household penetration of 150%+** — many households have multiple Prime accounts (e.g., parents + college-age children).\n\nBut VP of Prime Jamil Ghani sees a concerning trend: **US Prime membership growth has stalled at ~2% annually, down from 20%+ in 2015-2018.** The US market is saturated.\n\nGhani presents to Amazon CEO Andy Jassy: \"We have three strategic options for the next phase of Prime growth:\n\n**Option 1: Premium Tier - 'Prime Platinum'**\n- $199/year (vs. $139 for regular Prime)\n- Benefits: Same-day delivery on all orders, exclusive content (early access to Thursday Night Football, bonus content), concierge customer service, Prime Platinum exclusive sales events\n- **MoSCoW Assessment:**\n  - Must-Have: Same-day delivery (affluent users expect speed)\n  - Should-Have: Exclusive content (differentiates from regular Prime)\n  - Could-Have: Concierge service (high LTV users value premium support)\n  - Won't-Have: Platinum-only sales (creates brand fragmentation)\n\n**Option 2: Household Sharing - 'Prime Family'**\n- $179/year for up to 4 family members (each gets own Prime account)\n- Benefits: Shared payment method, family photo albums, coordinated deliveries\n- **MoSCoW Assessment:**\n  - Must-Have: Shared payment (eliminates redundant subscriptions)\n  - Should-Have: Individual accounts (privacy + personalization)\n  - Could-Have: Family photo albums (emotional lock-in)\n  - Won't-Have: Coordinated deliveries (operational complexity)\n\n**Option 3: Affiliate Program - 'Prime Referral Network'**\n- Pay existing Prime members $10/month for every new member they refer who stays 12+ months\n- Gamification: Referral leaderboards, exclusive swag for top referrers\n- **MoSCoW Assessment:**\n  - Must-Have: Referral tracking & payments (core functionality)\n  - Should-Have: Retention requirement (prevent gaming)\n  - Could-Have: Gamification (drives engagement)\n  - Won't-Have: Multi-level marketing (brand risk)\n\nThe team estimates:\n- **Prime Platinum**: 5% of current members upgrade ($199 × 10M = $2B incremental annual revenue), 2% abandon regular Prime due to 'premium envy' effect\n- **Prime Family**: 20% of households consolidate (lose $139 × 20M = $2.78B revenue, gain $179 × 20M = $3.58B = $800M net gain)\n- **Prime Referral Network**: Each active referrer brings 3 new members/year, 10% of members participate = 20M referrers × 3 new members = 60M new members over 3 years\n\nAs PM, how do you apply MoSCoW to prioritize these growth strategies?",
+            scenario: `**Seattle, Late 2024**
+
+Amazon Prime has reached a milestone: **200 million US members** (out of ~130M US households).
+
+**The Saturation Problem**
+
+This means Prime has achieved **household penetration of 150%+** — many households have multiple Prime accounts (e.g., parents + college-age children).
+
+**The Growth Challenge**
+
+VP of Prime Jamil Ghani sees a concerning trend: **US Prime membership growth has stalled at ~2% annually**, down from 20%+ in 2015-2018. The US market is saturated.
+
+**Three Strategic Options for Next-Phase Growth:**
+
+**Option 1: Premium Tier - 'Prime Platinum'**
+• **Price:** $199/year (vs. $139 for regular Prime)
+• **Benefits:** Same-day delivery on ALL orders, exclusive content (early TNF access, bonus content), concierge customer service, Platinum-exclusive sales
+• **MoSCoW:**
+  - Must-Have: Same-day delivery (affluent users expect speed)
+  - Should-Have: Exclusive content (differentiates from regular Prime)
+  - Could-Have: Concierge service (high LTV users value premium support)
+  - Won't-Have: Platinum-only sales (creates brand fragmentation)
+
+**Estimates:**
+- 5% of current members upgrade ($199 × 10M = $2B incremental revenue)
+- 2% abandon regular Prime due to 'premium envy' effect
+
+**Option 2: Household Sharing - 'Prime Family'**
+• **Price:** $179/year for up to 4 family members (each gets own Prime account)
+• **Benefits:** Shared payment method, family photo albums, coordinated deliveries
+• **MoSCoW:**
+  - Must-Have: Shared payment (eliminates redundant subscriptions)
+  - Should-Have: Individual accounts (privacy + personalization)
+  - Could-Have: Family photo albums (emotional lock-in)
+  - Won't-Have: Coordinated deliveries (operational complexity)
+
+**Estimates:**
+- 20% of households consolidate
+- Lose: $139 × 20M = $2.78B (redundant single accounts)
+- Gain: $179 × 20M = $3.58B (family plans)
+- **Net: +$800M revenue**
+
+**Option 3: Affiliate Program - 'Prime Referral Network'**
+• **Payment:** $10/month for every new member referred who stays 12+ months
+• **Gamification:** Referral leaderboards, exclusive swag for top referrers
+• **MoSCoW:**
+  - Must-Have: Referral tracking & payments (core functionality)
+  - Should-Have: Retention requirement (prevent gaming)
+  - Could-Have: Gamification (drives engagement)
+  - Won't-Have: Multi-level marketing (brand risk)
+
+**Estimates:**
+- 10% of members participate = 20M referrers
+- Each referrer brings 3 new members/year
+- **Total: 60M new members over 3 years**`,
             question: "Using MoSCoW, which strategy is Must-Have for Prime's next growth phase and why?",
             frameworks: "MoSCoW Method (Strategic Growth)",
             options: [
@@ -444,6 +875,7 @@
         const [showResults, setShowResults] = useState(false);
         const [hasAttempted, setHasAttempted] = useState(false);
         const [attemptCount, setAttemptCount] = useState(null);
+        const [showFrameworks, setShowFrameworks] = useState(false);
 
         useEffect(() => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -545,6 +977,33 @@
                         h('h2', { className: 'text-2xl md:text-3xl font-bold text-orange-400 mb-4' }, 'The Amazon Prime Story'),
                         h('p', { className: 'text-gray-300 text-lg max-w-xl mx-auto leading-relaxed' }, 'From $79/year free shipping to $139 all-in-one membership — navigate 10 pivotal prioritization decisions using RICE, MoSCoW, Kano Model, and Value vs Effort frameworks.')
                     ),
+
+                    // Framework Overview Section
+                    h('div', { className: 'mb-8' },
+                        h('button', {
+                            onClick: () => setShowFrameworks(!showFrameworks),
+                            className: 'w-full bg-white/10 backdrop-blur hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-between'
+                        },
+                            h('span', null, '📚 Learn the Frameworks Before You Start'),
+                            h('span', { className: 'text-xl' }, showFrameworks ? '▼' : '▶')
+                        ),
+                        showFrameworks && h('div', { className: 'mt-4 bg-white/10 backdrop-blur rounded-xl p-6 space-y-6' },
+                            Object.values(frameworkOverviews).map((fw, i) =>
+                                h('div', { key: i, className: 'framework-box rounded-lg p-5 border-l-4 border-orange-600' },
+                                    h('h3', { className: 'text-xl font-bold text-gray-900 mb-2 flex items-center gap-2' },
+                                        h('span', null, fw.emoji),
+                                        fw.name
+                                    ),
+                                    fw.formula && h('p', { className: 'text-orange-700 font-semibold mb-3' }, fw.formula),
+                                    (fw.components || fw.categories || fw.quadrants).map((item, j) =>
+                                        h('p', { key: j, className: 'text-gray-800 text-sm mb-1', dangerouslySetInnerHTML: { __html: item } })
+                                    ),
+                                    h('p', { className: 'text-gray-700 text-sm mt-3 italic' }, '📌 When to use: ' + fw.when)
+                                )
+                            )
+                        )
+                    ),
+
                     h('div', { className: 'bg-white/10 backdrop-blur rounded-2xl p-8 mb-8' },
                         h('div', { className: 'grid grid-cols-2 md:grid-cols-4 gap-4 mb-6' },
                             [['📋', '10', 'Questions'], ['🎯', '100', 'Points'], ['⏱️', '1', 'Attempt'], ['📊', '4', 'Tiers']].map((item, i) =>
