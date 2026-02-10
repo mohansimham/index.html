@@ -20,8 +20,8 @@
         .pulse-subtle { animation: pulseSub 2s ease-in-out infinite; }
         @keyframes pulseSub { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
         .scenario-text { font-size: 16px; line-height: 1.7; max-width: 65ch; }
-        .question-text { font-size: 17px; font-weight: 600; }
-        .option-text { font-size: 15px; line-height: 1.5; }
+        .question-text { font-size: 18px; font-weight: 700; line-height: 1.4; }
+        .option-text { font-size: 15px; line-height: 1.6; }
         .progress-fill { transition: width 0.5s ease; }
         .binge-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
         .binge-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
@@ -863,6 +863,42 @@ VP of Prime Jamil Ghani sees a concerning trend: **US Prime membership growth ha
         return "You have a beginning understanding of prioritization frameworks, but several responses showed mechanical application without strategic judgment. Review how frameworks like RICE, MoSCoW, and Kano are tools to inform decisions, not replace product strategy. Practice applying constraints (budget, timeline, resources) to framework outputs.";
     };
 
+    const getFrameworkDescription = (frameworkText) => {
+        if (frameworkText.includes('RICE')) {
+            return {
+                key: 'rice',
+                name: 'RICE Framework',
+                emoji: '🎯',
+                description: '<strong>Formula:</strong> (Reach × Impact × Confidence) ÷ Effort<br/><br/><strong>Purpose:</strong> Quantitative scoring method to prioritize features objectively.<br/><br/><strong>Components:</strong><br/>• <strong>Reach:</strong> How many people will this affect?<br/>• <strong>Impact:</strong> How much value per user? (0.25 = minimal, 3 = massive)<br/>• <strong>Confidence:</strong> How certain are your estimates? (0-100%)<br/>• <strong>Effort:</strong> Time/resources required (person-months)<br/><br/><strong>When to use:</strong> Comparing multiple features with different characteristics; need objective scoring to justify decisions.'
+            };
+        }
+        if (frameworkText.includes('MoSCoW')) {
+            return {
+                key: 'moscow',
+                name: 'MoSCoW Method',
+                emoji: '📋',
+                description: '<strong>Purpose:</strong> Categorical prioritization for time-constrained projects.<br/><br/><strong>Categories:</strong><br/>• <strong>Must-Have:</strong> Critical for success; project fails without it<br/>• <strong>Should-Have:</strong> Important but not vital; workarounds exist<br/>• <strong>Could-Have:</strong> Nice to have if time/budget allows<br/>• <strong>Won\'t-Have:</strong> Explicitly out of scope for this release<br/><br/><strong>When to use:</strong> Clear scope boundaries needed; stakeholder alignment on priorities; fixed deadlines or budgets.'
+            };
+        }
+        if (frameworkText.includes('Kano')) {
+            return {
+                key: 'kano',
+                name: 'Kano Model',
+                emoji: '😊',
+                description: '<strong>Purpose:</strong> Categorize features by customer satisfaction impact.<br/><br/><strong>Categories:</strong><br/>• <strong>Basic Expectations:</strong> Must-haves; absence causes dissatisfaction<br/>• <strong>Performance Attributes:</strong> More is better; linear satisfaction increase<br/>• <strong>Delighters:</strong> Unexpected features that create delight; absence doesn\'t cause dissatisfaction<br/>• <strong>Indifferent:</strong> Customers don\'t care either way<br/><br/><strong>When to use:</strong> Understanding customer psychology; balancing table stakes vs. differentiation; mature product optimization.'
+            };
+        }
+        if (frameworkText.includes('Value vs Effort') || frameworkText.includes('Value vs. Effort')) {
+            return {
+                key: 'valueEffort',
+                name: 'Value vs Effort Matrix',
+                emoji: '⚡',
+                description: '<strong>Purpose:</strong> 2×2 matrix for portfolio prioritization.<br/><br/><strong>Quadrants:</strong><br/>• <strong>Quick Wins</strong> (High Value, Low Effort) → Do first<br/>• <strong>Big Bets</strong> (High Value, High Effort) → Strategic investments<br/>• <strong>Hard Slogs</strong> (Low Value, High Effort) → Avoid or deprioritize<br/>• <strong>Time Sinks</strong> (Low Value, Low Effort) → Skip unless trivial<br/><br/><strong>When to use:</strong> Portfolio planning; resource-constrained environments; balancing short-term wins vs. long-term bets.'
+            };
+        }
+        return null;
+    };
+
     // ============================================================
     // MAIN COMPONENT
     // ============================================================
@@ -876,6 +912,7 @@ VP of Prime Jamil Ghani sees a concerning trend: **US Prime membership growth ha
         const [hasAttempted, setHasAttempted] = useState(false);
         const [attemptCount, setAttemptCount] = useState(null);
         const [showFrameworks, setShowFrameworks] = useState(false);
+        const [shownFrameworkDescriptions, setShownFrameworkDescriptions] = useState({});
 
         useEffect(() => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1174,28 +1211,73 @@ VP of Prime Jamil Ghani sees a concerning trend: **US Prime membership growth ha
                     h('span', { className: 'bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold' }, '🎯 ' + q.frameworks)
                 ),
 
+                // Framework Description Card (only show first time)
+                (() => {
+                    const fwDesc = getFrameworkDescription(q.frameworks);
+                    if (fwDesc && !shownFrameworkDescriptions[fwDesc.key]) {
+                        // Mark this framework as shown
+                        setTimeout(() => {
+                            setShownFrameworkDescriptions(prev => ({ ...prev, [fwDesc.key]: true }));
+                        }, 100);
+                        
+                        return h('div', { className: 'bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-lg p-5 mb-6 slide-in' },
+                            h('div', { className: 'flex items-start gap-3 mb-3' },
+                                h('span', { className: 'text-3xl' }, fwDesc.emoji),
+                                h('div', null,
+                                    h('h3', { className: 'text-lg font-bold text-gray-900' }, fwDesc.name),
+                                    h('p', { className: 'text-xs text-gray-600 mt-1' }, 'Framework Overview')
+                                )
+                            ),
+                            h('div', { 
+                                className: 'text-sm text-gray-700 leading-relaxed',
+                                dangerouslySetInnerHTML: { __html: fwDesc.description }
+                            })
+                        );
+                    }
+                    return null;
+                })(),
+
                 h('div', { className: 'bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6' },
                     h('h3', { className: 'text-sm font-bold text-gray-500 uppercase tracking-wider mb-3' }, 'Scenario'),
                     h('div', { className: 'scenario-text text-gray-700', dangerouslySetInnerHTML: { __html: formatText(q.scenario) } })
                 ),
 
                 h('div', { className: 'bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6' },
-                    h('h3', { className: 'question-text text-gray-900 mb-5' }, q.question),
-                    h('div', { className: 'space-y-3' },
-                        q.options.map((opt, oi) =>
-                            h('label', {
+                    h('h3', { className: 'question-text text-gray-900 mb-5 pb-3 border-b border-gray-200' }, q.question),
+                    h('div', { className: 'space-y-4' },
+                        q.options.map((opt, oi) => {
+                            // Parse option text to separate decision from reasoning
+                            const parts = opt.text.split(' — ');
+                            const decision = parts[0];
+                            const reasoning = parts.slice(1).join(' — ');
+                            
+                            return h('label', {
                                 key: oi,
-                                className: 'flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all ' +
-                                    (selectedAnswerIndex === oi ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'),
+                                className: 'block p-5 rounded-xl border-2 cursor-pointer transition-all ' +
+                                    (selectedAnswerIndex === oi ? 'border-orange-500 bg-orange-50 shadow-md' : 'border-gray-200 hover:border-orange-300 hover:bg-gray-50 hover:shadow-sm'),
                                 onClick: () => setSelectedAnswerIndex(oi)
                             },
-                                h('div', { className: 'mt-0.5 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ' +
-                                    (selectedAnswerIndex === oi ? 'border-orange-500' : 'border-gray-300') },
-                                    selectedAnswerIndex === oi && h('div', { className: 'w-2.5 h-2.5 rounded-full bg-orange-500' })
-                                ),
-                                h('span', { className: 'option-text text-gray-700' }, opt.text)
-                            )
-                        )
+                                h('div', { className: 'flex items-start gap-4' },
+                                    h('div', { className: 'mt-1 w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center ' +
+                                        (selectedAnswerIndex === oi ? 'border-orange-500 bg-white' : 'border-gray-300') },
+                                        selectedAnswerIndex === oi && h('div', { className: 'w-3 h-3 rounded-full bg-orange-500' })
+                                    ),
+                                    h('div', { className: 'flex-1' },
+                                        h('div', { className: 'font-semibold text-gray-900 mb-2' }, decision),
+                                        reasoning && h('div', { className: 'text-sm text-gray-600 leading-relaxed' }, reasoning)
+                                    )
+                                )
+                            );
+                        })
+                    ),
+                    h('div', { className: 'mt-6 pt-4 border-t border-gray-200 text-center' },
+                        h('p', { className: 'text-xs text-gray-500 mb-1' }, 'Created by'),
+                        h('a', { 
+                            href: 'https://linkedin.com/in/mohansimham', 
+                            target: '_blank',
+                            className: 'text-sm font-semibold text-orange-600 hover:text-orange-700 hover:underline'
+                        }, 'Mohan Simham'),
+                        h('p', { className: 'text-xs text-gray-400 mt-1' }, 'linkedin.com/in/mohansimham')
                     ),
                     h('button', {
                         onClick: handleAnswer,
