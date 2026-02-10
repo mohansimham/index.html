@@ -116,6 +116,12 @@
     </style>
 </head>
 <body class="antialiased">
+    <div id="loading-fallback" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 16px;">⏳</div>
+            <div style="font-size: 20px; color: #1E3A8A;">Loading PM Simulation...</div>
+        </div>
+    </div>
     <div id="root"></div>
 
     <script>
@@ -608,6 +614,39 @@
     ];
 
     // ============================================================
+    // HELPER FUNCTIONS
+    // ============================================================
+    const formatText = (text) => {
+        if (!text) return '';
+        return text.split('\n\n').map((para, i) => {
+            let formatted = para
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+                .replace(/\n/g, '<br/>');
+            if (para.startsWith('✓') || para.startsWith('✗') || para.startsWith('⏳')) {
+                return `<div class="ml-2 mb-2">${formatted}</div>`;
+            }
+            if (para.startsWith('"') || para.startsWith("'")) {
+                return `<div class="border-l-4 border-teal-400 pl-4 py-2 italic text-gray-700 bg-teal-50 rounded-r my-3">${formatted}</div>`;
+            }
+            return `<p class="mb-3 text-gray-700 leading-relaxed">${formatted}</p>`;
+        }).join('');
+    };
+
+    const getTier = (pct) => {
+        if (pct >= 90) return { label: 'Strategic Mastery', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-500', emoji: '🏆', gradient: 'from-emerald-50 to-emerald-100' };
+        if (pct >= 75) return { label: 'Applied Proficiency', color: 'text-teal-700', bg: 'bg-teal-50', border: 'border-teal-500', emoji: '🎯', gradient: 'from-teal-50 to-teal-100' };
+        if (pct >= 60) return { label: 'Core Competency', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-500', emoji: '📊', gradient: 'from-amber-50 to-amber-100' };
+        return { label: 'Foundational Understanding', color: 'text-gray-700', bg: 'bg-gray-50', border: 'border-gray-400', emoji: '📚', gradient: 'from-gray-50 to-gray-100' };
+    };
+
+    const getTierNarrative = (pct) => {
+        if (pct >= 90) return "Exceptional performance. You demonstrated masterful understanding of prioritization frameworks across Amazon Prime's entire history. Your ability to apply RICE, MoSCoW, Kano Model, and Value vs Effort Matrix to real strategic decisions reflects the instincts of a senior PM who understands both the math and the strategic context.";
+        if (pct >= 75) return "Strong performance. You showed solid intuition for prioritization frameworks and made mostly strategic decisions. You understand the mechanics of RICE scoring and MoSCoW categorization, though some opportunities for deeper strategic thinking were missed. Your PM prioritization instincts are well-developed.";
+        if (pct >= 60) return "Good foundational understanding of prioritization frameworks. You grasped core concepts like RICE calculation and Value vs Effort quadrants but occasionally missed strategic nuance (e.g., choosing efficient features over transformational ones, or ignoring business constraints). Focus on balancing framework outputs with strategic context.";
+        return "You have a beginning understanding of prioritization frameworks, but several responses showed mechanical application without strategic judgment. Review how frameworks like RICE, MoSCoW, and Kano are tools to inform decisions, not replace product strategy. Consider retaking the simulation to reinforce the strategic thinking behind each framework.";
+    };
+
+    // ============================================================
     // MAIN APP COMPONENT
     // ============================================================
     function PMSimulation() {
@@ -720,29 +759,6 @@
                     timestamp: new Date().toISOString()
                 })
             }).catch(err => console.log('Completion tracking error:', err));
-        };
-
-        const formatText = (text) => {
-            if (!text) return '';
-            return text.split('\n\n').map((para, i) => {
-                let formatted = para
-                    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
-                    .replace(/\n/g, '<br/>');
-                if (para.startsWith('✓') || para.startsWith('✗') || para.startsWith('⏳')) {
-                    return `<div class="ml-2 mb-2">${formatted}</div>`;
-                }
-                if (para.startsWith('"') || para.startsWith("'")) {
-                    return `<div class="border-l-4 border-teal-400 pl-4 py-2 italic text-gray-700 bg-teal-50 rounded-r my-3">${formatted}</div>`;
-                }
-                return `<p class="mb-3 text-gray-700 leading-relaxed">${formatted}</p>`;
-            }).join('');
-        };
-
-        const getTier = (pct) => {
-            if (pct >= 90) return { label: 'Strategic Mastery', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-500', emoji: '🏆', gradient: 'from-emerald-50 to-emerald-100' };
-            if (pct >= 75) return { label: 'Applied Proficiency', color: 'text-teal-700', bg: 'bg-teal-50', border: 'border-teal-500', emoji: '🎯', gradient: 'from-teal-50 to-teal-100' };
-            if (pct >= 60) return { label: 'Core Competency', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-500', emoji: '📊', gradient: 'from-amber-50 to-amber-100' };
-            return { label: 'Foundational Understanding', color: 'text-gray-700', bg: 'bg-gray-50', border: 'border-gray-400', emoji: '📚', gradient: 'from-gray-50 to-gray-100' };
         };
 
         const shareToLinkedIn = () => {
@@ -1099,15 +1115,17 @@
             )
         );
 
-        function getTierNarrative(pct) {
-            if (pct >= 90) return "Exceptional performance. You demonstrated masterful understanding of prioritization frameworks across Amazon Prime's entire history. Your ability to apply RICE, MoSCoW, Kano Model, and Value vs Effort Matrix to real strategic decisions reflects the instincts of a senior PM who understands both the math and the strategic context.";
-            if (pct >= 75) return "Strong performance. You showed solid intuition for prioritization frameworks and made mostly strategic decisions. You understand the mechanics of RICE scoring and MoSCoW categorization, though some opportunities for deeper strategic thinking were missed. Your PM prioritization instincts are well-developed.";
-            if (pct >= 60) return "Good foundational understanding of prioritization frameworks. You grasped core concepts like RICE calculation and Value vs Effort quadrants but occasionally missed strategic nuance (e.g., choosing efficient features over transformational ones, or ignoring business constraints). Focus on balancing framework outputs with strategic context.";
-            return "You have a beginning understanding of prioritization frameworks, but several responses showed mechanical application without strategic judgment. Review how frameworks like RICE, MoSCoW, and Kano are tools to inform decisions, not replace product strategy. Consider retaking the simulation to reinforce the strategic thinking behind each framework.";
-        }
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(PMSimulation));
+    // Hide loading fallback and render app
+    const loadingEl = document.getElementById('loading-fallback');
+    if (loadingEl) loadingEl.style.display = 'none';
+
+    // Use compatible rendering method
+    ReactDOM.render(
+        React.createElement(PMSimulation),
+        document.getElementById('root')
+    );
     </script>
 </body>
 </html>
