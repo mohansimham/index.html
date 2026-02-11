@@ -1210,15 +1210,10 @@ VP of Prime Jamil Ghani sees a concerning trend: **US Prime membership growth ha
                     h('span', { className: 'bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold' }, '🎯 ' + q.frameworks)
                 ),
 
-                // Framework Description Card (only show first time)
+                // Framework Description Card - Always show when framework matches
                 (() => {
                     const fwDesc = getFrameworkDescription(q.frameworks);
-                    if (fwDesc && !shownFrameworkDescriptions[fwDesc.key]) {
-                        // Mark this framework as shown
-                        setTimeout(() => {
-                            setShownFrameworkDescriptions(prev => ({ ...prev, [fwDesc.key]: true }));
-                        }, 100);
-                        
+                    if (fwDesc) {
                         return h('div', { className: 'bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-lg p-5 mb-6 slide-in' },
                             h('div', { className: 'flex items-start gap-3 mb-3' },
                                 h('span', { className: 'text-3xl' }, fwDesc.emoji),
